@@ -2,6 +2,7 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types, F
+from aiogram.types import URLInputFile
 from aiogram.filters.command import Command
 
 
@@ -13,6 +14,12 @@ bot = Bot(token="7189654687:AAHMr7zxnY_hXVlHiIH6Ew3YT0gMNOdoIDU")
 
 # Диспетчер
 dp = Dispatcher()
+
+next_id = 0
+
+keyboard_next = types.ReplyKeyboardMarkup(keyboard=[
+        [types.KeyboardButton(text="next")]
+    ])
 
 
 # Хэндлер на команду /start
@@ -35,21 +42,36 @@ async def cmd_start(message: types.Message):
 
 @dp.message(F.text.lower() == "первая дверь")
 async def with_puree(message: types.Message):
-    await message.reply("Тебе повезло ты выжил!", reply_markup=types.ReplyKeyboardRemove())
+    await message.reply("Тебе повезло ты выжил!", reply_markup=keyboard_next)
 
 @dp.message(F.text.lower() == "второя дверь")
 async def without_puree(message: types.Message):
-    kb = [
-        [types.KeyboardButton(text="next")]
-    ]
-    keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
-    await message.reply("Ты сдох хахаххаахха", reply_markup=keyboard)
+    await message.reply("Ты сдох хахаххаахха", reply_markup=keyboard_next)
    
 @dp.message(F.text.lower() == "next")
 async def cmd_start(message: types.Message):
-    await message.answer("Следующее задание", reply_markup=types.ReplyKeyboardRemove())
+    if next_id == 0:
+        pass
+    elif next_id == 1:
+        kb = [
+            [types.KeyboardButton(text="Да!")],
+            [types.KeyboardButton(text="Нет!")]
+        ]
+        keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
+        image_from_url = URLInputFile("https://magiavody.ru/upload/shop_3/4/0/0/item_400/small_shop_property_file_400_254.jpg")
+        result = await message.answer_photo(    image_from_url,
+            caption="Искупался бы в этом бассейне?", reply_markup=keyboard
+        )
+    #await message.answer("Следующее задание", reply_markup=types.ReplyKeyboardRemove())
 
 
+@dp.message(F.text.lower() == "да!")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты сдох из за горячей воды хахахаахах", reply_markup=keyboard_next)
+
+@dp.message(F.text.lower() == "нет!")
+async def reply_no(message: types.Message):
+    await message.reply("Тебе повезло ты выжил!", reply_markup=keyboard_next)
 
 
 
