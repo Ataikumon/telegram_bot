@@ -25,6 +25,8 @@ keyboard_next = types.ReplyKeyboardMarkup(keyboard=[
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
+    global next_id
+    next_id = 0
     await message.answer("Проверь интуицию")
 
 
@@ -50,19 +52,24 @@ async def without_puree(message: types.Message):
    
 @dp.message(F.text.lower() == "next")
 async def cmd_start(message: types.Message):
+    global next_id
     if next_id == 0:
-        pass
-    elif next_id == 1:
         kb = [
             [types.KeyboardButton(text="Да!")],
-            [types.KeyboardButton(text="Нет!")]
+            [types.KeyboardButton(text="Нет!")],
         ]
         keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
         image_from_url = URLInputFile("https://magiavody.ru/upload/shop_3/4/0/0/item_400/small_shop_property_file_400_254.jpg")
         result = await message.answer_photo(    image_from_url,
             caption="Искупался бы в этом бассейне?", reply_markup=keyboard
         )
-    #await message.answer("Следующее задание", reply_markup=types.ReplyKeyboardRemove())
+        next_id = 1
+    elif next_id == 1:
+        kb = [
+            [types.KeyboardButton(text="last")],
+        ]
+        keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
+        await message.answer("Следующее задание", reply_markup=keyboard)
 
 
 @dp.message(F.text.lower() == "да!")
@@ -74,10 +81,39 @@ async def reply_no(message: types.Message):
     await message.reply("Тебе повезло ты выжил!", reply_markup=keyboard_next)
 
 
+@dp.message(F.text.lower() == "last")
+async def cmd_last(message: types.Message):
+    kb = [
+        [types.KeyboardButton(text="1")],
+        [types.KeyboardButton(text="2")],
+        [types.KeyboardButton(text="3")],
+        [types.KeyboardButton(text="4")],
+        [types.KeyboardButton(text="5")],
+
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
+    await message.answer("Выбери цифру от 1 до 5 ты проиграешь если выберешь неправильный номер", reply_markup=keyboard)
+    
+@dp.message(F.text.lower() == "1")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты проиграл", reply_markup=keyboard_next)
+
+@dp.message(F.text.lower() == "2")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты проиграл", reply_markup=keyboard_next)
+
+@dp.message(F.text.lower() == "3")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты проиграл", reply_markup=keyboard_next)
 
 
+@dp.message(F.text.lower() == "4")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты выиграл", reply_markup=keyboard_next)
 
-
+@dp.message(F.text.lower() == "5")
+async def reply_yes(message: types.Message):
+    await message.reply("Ты проиграл", reply_markup=keyboard_next)
 
 
 
